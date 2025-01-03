@@ -353,13 +353,13 @@ status: {}
 ## Limit Ranges
 kubernetes.io > Documentation > Concepts > Policies > Limit Ranges (https://kubernetes.io/docs/concepts/policy/limit-range/)
 
-### Create a namespace with limit range
+### Create a namespace named limitrange with a LimitRange that limits pod memory to a max of 500Mi and min of 100Mi
 
 <details><summary>show</summary>
 <p>
 
 ```bash
-kubectl create ns one
+kubectl create ns limitrange
 ```
 
 vi 1.yaml
@@ -368,14 +368,14 @@ apiVersion: v1
 kind: LimitRange
 metadata:
   name: ns-memory-limit
-  namespace: one
+  namespace: limitrange
 spec:
   limits:
   - max: # max and min define the limit range
       memory: "500Mi"
     min:
       memory: "100Mi"
-    type: Container
+    type: Pod
 ```
 
 ```bash
@@ -390,12 +390,12 @@ kubectl apply -f 1.yaml
 <p>
 
 ```bash
-kubectl describe limitrange ns-memory-limit -n one
+kubectl describe limitrange ns-memory-limit -n limitrange
 ```
 </p>
 </details>
 
-### Create a pod with resources requests memory = half of max memory constraint in namespace
+### Create an nginx pod that requests 250Mi of memory in the limitrange namespace
 
 <details><summary>show</summary>
 <p>
@@ -409,7 +409,7 @@ metadata:
   labels:
     run: nginx
   name: nginx
-  namespace: one
+  namespace: limitrange
 spec:
   containers:
   - image: nginx
@@ -417,6 +417,8 @@ spec:
     resources:
       requests:
         memory: "250Mi"
+      limits:
+        memory: "500Mi" # limit has to be specified and be <= limitrange
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}
@@ -562,7 +564,7 @@ kubectl get resourcequota -n one
 
 ```
 NAME    AGE   REQUEST                                          LIMIT
-my-rq   10m   requests.cpu: 500m/1, requests.memory: 3Mi/1Gi   limits.cpu: 1/2, limits.memory: 4Mi/2Gi
+my-rq   10m   requests.cpu: 500m/1, requests.memory: 1Gi/1Gi   limits.cpu: 1/2, limits.memory: 2Gi/2Gi
 ```
 </p>
 </details>
@@ -732,7 +734,8 @@ kubectl exec -it nginx -- env | grep USERNAME | cut -d '=' -f 2 # will show 'adm
 
 ```bash
 export ns="-n secret-ops"
-k create secret generic ext-service-secret -n secret-ops --from-literal=API_KEY=LmLHbYhsgWZwNifiqaRorH8T $do > sc.yaml
+export do="--dry-run=client -oyaml"
+k create secret generic ext-service-secret --from-literal=API_KEY=LmLHbYhsgWZwNifiqaRorH8T $ns $do > sc.yaml
 k apply -f sc.yaml
 ```
 

@@ -166,7 +166,7 @@ As an alternative to using `| grep` you can use jsonPath like `kubectl get po ng
 <p>
 
 ```bash
-kubectl annotate po nginx{1..3} description-
+kubectl annotate po nginx{1..3} description- owner-
 ```
 
 </p>
@@ -291,8 +291,8 @@ kind: Pod
 metadata:
   name: frontend
 spec:
-  image:
-    name: nginx
+  containers:
+  - name: nginx
     image: nginx
   nodeSelector:
     kubernetes.io/hostname: controlplane
@@ -445,7 +445,7 @@ kubectl describe po nginx-5ff4457d65-nslcl | grep -i image # should be nginx:1.1
 </p>
 </details>
 
-### Do an on purpose update of the deployment with a wrong image nginx:1.91
+### Do an on-purpose update of the deployment with a wrong image nginx:1.91
 
 <details><summary>show</summary>
 <p>
@@ -455,7 +455,7 @@ kubectl set image deploy nginx nginx=nginx:1.91
 # or
 kubectl edit deploy nginx
 # change the image to nginx:1.91
-# vim tip: type (without quotes) '/image' and Enter, to navigate quickly
+# vim tip: type (without quotes) '/image' and press Enter, to navigate quickly
 ```
 
 </p>
@@ -516,7 +516,7 @@ kubectl describe deploy nginx
 </p>
 </details>
 
-### Autoscale the deployment, pods between 5 and 10, targetting CPU utilization at 80%
+### Autoscale the deployment, pods between 5 and 10, targeting CPU utilization at 80%
 
 <details><summary>show</summary>
 <p>
@@ -717,7 +717,7 @@ version-2
 version-1
 ```
 
-If the v2 is stable, scale it up to 4 replicas and shoutdown the v1:
+If the v2 is stable, scale it up to 4 replicas and shutdown the v1:
 ```
 kubectl scale --replicas=4 deploy my-app-v2
 kubectl delete deploy my-app-v1
@@ -1000,7 +1000,7 @@ kubectl create cronjob busybox --image=busybox --schedule="*/1 * * * *" -- /bin/
 ```bash
 kubectl get po # copy the ID of the pod whose container was just created
 kubectl logs <busybox-***> # you will see the date and message 
-kubectl delete cj busybox --force # cj stands for cronjob and --force to delete immediately 
+kubectl delete cj busybox # cj stands for cronjob
 ```
 
 </p>

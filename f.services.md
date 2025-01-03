@@ -35,8 +35,8 @@ kubectl get ep # endpoints
 
 ```bash
 kubectl get svc nginx # get the IP (something like 10.108.93.130)
-kubectl run busybox --rm --image=busybox -it --restart=Never -- sh
-wget -O- IP:80
+kubectl run busybox --rm --image=busybox -it --restart=Never --
+wget -O- [PUT THE POD'S IP ADDRESS HERE]:80
 exit
 ```
 
@@ -181,7 +181,7 @@ kubectl delete deploy foo
 </p>
 </details>
 
-### Create an nginx deployment of 2 replicas, expose it via a ClusterIP service on port 80. Create a NetworkPolicy so that only pods with labels 'access: granted' can access the deployment and apply it
+### Create an nginx deployment of 2 replicas, expose it via a ClusterIP service on port 80. Create a NetworkPolicy so that only pods with labels 'access: granted' can access the pods in this deployment and apply it
 
 kubernetes.io > Documentation > Concepts > Services, Load Balancing, and Networking > [Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 
